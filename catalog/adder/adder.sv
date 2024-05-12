@@ -1,31 +1,32 @@
-//////////////////////////////////////////////////////////////////////////////////
-// The Cooper Union
-// ECE 251 Spring 2024
-// Engineer: YOUR NAMES
-// 
-//     Create Date: 2023-02-07
-//     Module Name: adder
-//     Description: simple behavorial adder
+///////////////////////////////////////////////////////////////////////////////
 //
-// Revision: 1.0
+// Full Adder module
 //
-//////////////////////////////////////////////////////////////////////////////////
+// Full adder module for your Computer Architecture Elements Catalog
+//
+// module: adder
+// hdl: Verilog
+//
+// author: Kristof Jablonowski <kristof.jablonowski@cooper.edu>
+//
+///////////////////////////////////////////////////////////////////////////////
+
 `ifndef ADDER
 `define ADDER
 
-`timescale 1ns/100ps
-
-module adder
-    #(parameter n = 32)(
-    //
-    // ---------------- PORT DEFINITIONS ----------------
-    //
-
+module adder #(parameter w = 16)(  // adder width parameter
+    input [w - 1:0] a,
+    input [w - 1:0] b,
+    output reg [w - 1:0] s
 );
-    //
-    // ---------------- MODULE DESIGN IMPLEMENTATION ----------------
-    //
+  
+    logic [w:0] temp;
+
+    always @ (*) begin
+        temp = a + b;
+        s = temp[w - 1:0];
+    end
 
 endmodule
 
-`endif // ADDER
+`endif //_ADDER_SV

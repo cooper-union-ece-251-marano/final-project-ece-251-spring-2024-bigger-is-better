@@ -10,29 +10,57 @@
 // Revision: 1.0
 //
 //////////////////////////////////////////////////////////////////////////////////
-`ifndef TB_ADDER
-`define TB_ADDER
-
 `timescale 1ns/100ps
-`include "adder.sv"
 
 module tb_adder;
-    parameter n = 32;
-    logic [(n-1):0] a, b, y;
 
-   initial begin
-        $dumpfile("adder.vcd");
-        $dumpvars(0, uut);
-        $monitor("a = 0x%0h b = 0x%0h y = 0x%0h", a, b, y);
-    end
+    parameter w = 16;  	// width of adder
+    reg [w - 1:0] a, b; // adder inputs
+    reg c_in;           // carry in
+    wire [w - 1:0] s;  	// output sum
+    reg reset;        // enable
+
+    //uut (unit under test)
+    adder #(.w(w)) uut(
+        .reset(reset),
+        .a(a), 
+        .b(b), 
+        .c_in(c_in), 
+        .s(s), 
+        .c_out(c_out)
+    );
 
     initial begin
-        a <= #n'hFFFFFFFF;
-        b <= #n'hFFFFFFFF;
+        $dumpfile("tb_adder.vcd"); 
+        $dumpvars(0, uut);         
+        
+        #10
+        // let a = 101110110 and b = 101110110 s.t. sum should = 101110110
+        a = 8'b10101010; 
+        b = 8'b11001100;
+        c_in = 0; 
+        #10;
+
+        //apply random values with carry in = 1 and carry in = 0
+        a = $random; 
+        b = $random; 
+        c_in = 1; 
+        #10;
+
+        a = $random; 
+        b = $random; 
+        c_in = 0; 
+        #10;
+        
+        reset = 1;
+        #10;
+        $finish;
     end
 
-    adder uut(
-        .A(a), .B(b), .Y(y)
-    );
+    // monitor the ouputs along with the time they occured
+    initial begin
+        $monitor("Time = %0t: a = %b, b = %b, c_in = %b -> s = %b, c_out = %b, reset = %b",
+            $time, a, b, c_in, s, c_out, reset);
+    end
+
 endmodule
-`endif // TB_ADDER
